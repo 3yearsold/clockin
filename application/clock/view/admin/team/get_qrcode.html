@@ -1,0 +1,47 @@
+<style>
+
+.bigBox{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    place-content: space-between center;
+    align-items: flex-start;
+}
+.demo_test {
+    flex-flow: column;
+}
+
+
+.div1 {
+    margin: 10px;
+    width: 200px;
+    height: 220px;
+    align-self: auto;
+    flex-basis: 0px;
+    flex: 0 1 auto;
+}
+
+.div2 {
+    text-align: center;
+    margin: 10px;
+    width: 200px;
+    height: 20px;
+    align-self: stretch;
+    flex-basis: 0px;
+    flex: 0 1 auto;
+}
+.qrcode{
+    width: 200px;
+    height: 220px;
+}
+</style>
+
+<div class="bigBox">
+    <div class='demo_test'>
+        <div class='div1'>
+            <img class="qrcode" src='__MODULE_IMG__/bindTeam.png' alt="">
+        </div>
+        <div class='div2'>班组绑定码</div>
+    </div>
+</div>

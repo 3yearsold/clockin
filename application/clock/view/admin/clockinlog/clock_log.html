@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>考勤记录</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .summary {
+            margin-bottom: 20px;
+        }
+        .summary h2 {
+            display: inline-block;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="summary">
+    <h2>考勤汇总 统计日期：<?= $summary['date_range'] ?></h2><br>
+    <h2>报表生成时间：<?= $summary['report_time'] ?></h2><br>
+    <h2>项目名称：<?= $summary['project_name'] ?></h2>
+</div>
+<table>
+    <tr>
+        <th>姓名</th>
+        <th>班组</th>
+        <th>岗位</th>
+        <th>出勤天数</th>
+        <?php for ($i = 0; $i <= $summary['days']; $i++): ?>
+        <th><?= date('d', strtotime($summary['start_date']) + $i * 86400) ?></th>
+        <?php endfor; ?>
+    </tr>
+    <?php foreach ($records as $record): ?>
+    <tr>
+        <td><?= $record['member_name'] ?></td>
+        <td><?= $record['name'] ?></td>
+        <td><?= $record['station'] ?></td>
+        <td><?= $record['clock_count'] ?></td>
+        <?php $attendance = explode(',', $record['clock']); ?>
+        <?php for ($i = 0; $i < $summary['days']; $i++): ?>
+        <td><?= isset($attendance[$i]) ? $attendance[$i] : '' ?></td>
+        <?php endfor; ?>
+    </tr>
+    <?php endforeach; ?>
+</table>
+</body>
+</html>

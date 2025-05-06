@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合同审阅助手1.0 Beta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .upload-container {
+            position: relative; /* 新增这行 */
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #007bff;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-area label {
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .file-count {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #ff0000;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .analyze-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .analyze-button:hover {
+            background-color: #0056b3;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .output {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: calc(100vh - 400px); /* 自适应高度 */
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .output h1 {
+            font-size: 2rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .output h2 {
+            font-size: 1.5rem;
+            color: #555;
+        }
+
+        .output ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .output li {
+            margin-bottom: 10px;
+        }
+        .help-block{
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 1rem;
+        }
+
+        /* 反馈按钮样式 */
+        .feedback-btn {
+            position: absolute;
+            /* 修改定位基准 */
+            right: -65px; /* 按钮宽度40px + 间距5px = 总位移45px */
+            top: 50%;
+            transform: translateY(-50%);
+            /* 保持其他样式不变 */
+            background: #007bff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(147, 147, 147, 0.15);
+        }
+        /* 添加悬停效果 */
+        .feedback-btn:hover {
+            background: #0652a6;
+        }
+
+
+        /* 反馈弹窗样式 */
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .feedback-content {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 4px;
+            box-sizing: border-box; /* 新增：防止padding影响总宽度 */
+        }
+
+        .feedback-content textarea {
+            width: 96%; /* 微调宽度 */
+            height: 120px;
+            margin: 0 auto; /* 水平居中 */
+            display: block; /* 使margin生效 */
+            margin-bottom: 10px;
+            padding: 8px;
+            resize: vertical;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+        }
+        /* 添加聚焦效果 */
+        .feedback-content textarea:focus {
+            border-color: #0056b3;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .submit-feedback {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            display: block; /* 使按钮独立成行 */
+            margin: 0 auto; /* 水平居中 */
+            width: 120px; /* 固定宽度保持美观 */
+        }
+
+        .submit-feedback:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="upload-container">
+    <h1>合同审阅助手1.0 Beta</h1>
+    <div class="upload-area" id="uploadArea">
+        <input type="file" name="file" id="fileInput" accept="image/*, .doc, .docx, .ppt, .pptx, .pdf" required>
+        <label for="fileInput">点击或拖拽文件上传</label>
+        <div class="file-count" id="fileCount">文件数量：0/1</div>
+        <div class="file-name" id="fileName"></div>
+    </div>
+    <p class="help-block">根据合同大小，解析时间大约在 1-3 分钟，请耐心等待。</p>
+    <button class="analyze-button" id="analyzeButton">开始合同分析</button>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>AI分析中，请稍候...</p>
+    </div>
+    <div class="output" id="output"></div>
+
+    <!-- 反馈按钮 -->
+    <button class="feedback-btn" title="意见反馈">
+        <svg class="icon" viewBox="0 0 1024 1024" width="24" height="24">
+            <path d="M472 128l80 0 0 384-80 0 0-384Z" fill="#ffffff"></path>
+            <path d="M512 616m-40 0a40 40 0 1 0 80 0 40 40 0 1 0-80 0Z" fill="#ffffff"></path>
+            <path d="M890 128H744a40 40 0 0 0-40 40 40 40 0 0 0 40 40h96a40 40 0 0 1 40 40v416a40 40 0 0 1-40 40H648.88a70 70 0 0 0-49.5 20.5l-59.5 59.5L512 811.88 484.12 784l-40-40-19.5-19.5a70 70 0 0 0-49.5-20.5H184a40 40 0 0 1-40-40V248a40 40 0 0 1 40-40h96a40 40 0 0 0 40-40 40 40 0 0 0-40-40H134a70 70 0 0 0-70 70v516a70 70 0 0 0 70 70h237l112.72 112.74a40 40 0 0 0 56.56 0L653 784h237a70 70 0 0 0 70-70V198a70 70 0 0 0-70-70z" fill="#ffffff"></path>
+        </svg>
+    </button>
+
+    <!-- 反馈弹窗 -->
+    <div class="feedback-modal">
+        <div class="feedback-content">
+            <textarea placeholder="请输入您的反馈内容"></textarea>
+            <button class="submit-feedback">提交反馈</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileCount = document.getElementById('fileCount');
+    const fileName = document.getElementById('fileName');
+    const analyzeButton = document.getElementById('analyzeButton');
+    const loading = document.getElementById('loading');
+    const output = document.getElementById('output');
+    const uploadArea = document.getElementById('uploadArea');
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            fileCount.textContent = `文件数量：1/1`;
+            fileName.textContent = `文件名：${fileInput.files[0].name}`;
+        } else {
+            fileCount.textContent = `文件数量：0/1`;
+            fileName.textContent = '';
+        }
+    });
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#007bff';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#ccc';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ccc';
+        fileInput.files = e.dataTransfer.files;
+        fileCount.textContent = `文件数量：1/1`;
+        fileName.textContent = `文件名：${fileInput.files[0].name}`;
+    });
+
+    analyzeButton.addEventListener('click', () => {
+        if (fileInput.files.length === 0) {
+            alert('请选择一个文件');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const authCode = urlParams.get('auth_code');
+
+        loading.style.display = 'block';
+        output.textContent = '';
+
+        fetch('upload', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'x-auth-code': authCode
+            }
+        })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        const url = data.url;
+                        const token = data.token;
+                        const flowId = data.flowId;
+
+                        console.log(url);
+                        console.log(token);
+                        console.log(flowId);
+
+                        const options = {
+                            method: 'POST',
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                Connection: 'keep-alive'
+                            },
+                            body: JSON.stringify({
+                                parameters: {
+                                    input: url
+                                },
+                                workflow_id: flowId
+                            })
+                        };
+
+                        return fetch('https://api.coze.cn/v1/workflow/run', options);
+                    } else {
+                        throw new Error(data.msg);
+                    }
+                })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.code === 0) {
+                        let markdownContent = JSON.parse(response.data).output;
+                        console.log(markdownContent); // 打印原始 Markdown 内容
+
+                        // 移除开头和结尾的 ```
+                        if (markdownContent.startsWith('```') && markdownContent.endsWith('```')) {
+                            markdownContent = markdownContent.slice(3, -3).trim();
+                        }
+
+                        console.log(markdownContent); // 打印处理后的 Markdown 内容
+
+                        // 渲染 Markdown 内容
+                        output.innerHTML = marked.parse(markdownContent);
+
+                        // 打印渲染后的 HTML 内容
+                        console.log(output.innerHTML);
+                    } else {
+                        throw new Error(response.msg);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('处理失败: ' + err.message);
+                })
+                .finally(() => {
+                    loading.style.display = 'none';
+                });
+    });
+
+
+    document.querySelector('.feedback-btn').addEventListener('click', function() {
+        document.querySelector('.feedback-modal').style.display = 'block';
+    });
+
+    document.querySelector('.submit-feedback').addEventListener('click', function() {
+        const content = document.querySelector('.feedback-content textarea').value;
+
+        fetch('contract/feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content: content })
+        })
+                .then(response => response.json())
+                .then(response => {
+                    console.log(response);
+                    if (response.code === 0) {
+                        alert('反馈提交成功！');
+                        document.querySelector('.feedback-modal').style.display = 'none';
+                    } else {
+                        alert(response.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('网络错误');
+                });
+    });
+
+    // 点击蒙层关闭弹窗
+    document.querySelector('.feedback-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+
+</script>
+<!-- 引入 marked.js 用于渲染 Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</body>
+</html>

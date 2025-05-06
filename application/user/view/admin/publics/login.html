@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus" lang="zh"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus" lang="zh"> <!--<![endif]-->
+
+<head>
+  <meta charset="utf-8">
+  <title>项目打卡后台管理系统-登录</title>
+  <link rel="shortcut icon" href="__ADMIN_IMG__/favicons/favicon.ico">
+  <link rel="stylesheet" href="__ADMIN_CSS__/login.css">
+</head>
+<body>
+<div class="Box">
+  <div class="left">
+    <div class="centerBox">
+      <img src="__ADMIN_IMG__/logo-signin.png"
+           alt="">
+      <h4>项目打卡后台管理系统</h4>
+      <p>BoHong Project Check-in System</p>
+    </div>
+  </div>
+  <div class="right">
+    <form name="login-form" action="{:url('signin')}" method="post">
+      <h3>欢迎登录</h3>
+      <input type="text" name="username" placeholder="请输入账号" required>
+      <input type="password" name="password" placeholder="请输入密码" required>
+      <input type="submit" class="loginBtn" value="登录"></button>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('.login-form').on('submit', function () {
+      var $data = $(this).serialize();
+      this.loading();
+      $.post($(this).attr('action'), $data, function (res) {
+      })
+    });
+  });
+</script>
+</body>
+</html>

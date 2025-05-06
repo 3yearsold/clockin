@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红圈系统操作手册</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 0px;
+            z-index: 1001;
+            font-size: 24px;
+            cursor: pointer;
+            color: rgba(0,0,0,.87);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        /* 左侧导航栏 */
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            color: rgba(0,0,0,.87);
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1000;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        /* 折叠按钮 */
+        .toggle-sidebar {
+            position: absolute;
+            left: 5px;
+            top: 20px;
+            width: 25px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            color: rgba(0,0,0,.87);
+            font-size: 24px;
+        }
+
+        .toggle-sidebar:hover {
+            color:gray;
+            font-weight: bold;
+        }
+
+        .nav-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-data {
+            display: none;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            padding: 15px;
+            margin-left: 15px;
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 4px 7px;
+            background-color: gray;
+            color: rgba(0,0,0,.87);
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        /* 导航菜单 */
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu > li {
+            position: relative;
+        }
+
+        .nav-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: rgba(0,0,0,.87);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-menu li.active > a {
+            background-color: rgba(0,0,0,.1);
+        }
+
+        .nav-menu li i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .nav-menu li .arrow {
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+
+        /* 二级菜单 */
+        .sub-menu {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .sub-menu li a {
+            padding-left: 45px;
+        }
+
+        .sub-menu li.active a {
+            background-color: rgba(0,0,0,.1);
+        }
+
+        .nav-menu li.expanded > .sub-menu {
+            max-height: 500px;
+        }
+
+        .nav-menu li.expanded > a .arrow {
+            transform: rotate(90deg);
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .content-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .content-body {
+            color: rgba(0,0,0,.87);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            min-height: 300px;
+        }
+        .document-title {
+            font-size: 36px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 折叠状态 */
+        .sidebar.collapsed {
+            width: 0px;
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .arrow {
+            display: none;
+        }
+
+        .sidebar.collapsed .search-box input {
+            display: none;
+        }
+
+        .sidebar.collapsed .search-box button {
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .sub-menu {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-menu li {
+            position: relative;
+        }
+
+        .sidebar.collapsed .nav-menu li:hover .sub-menu {
+            display: block;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            width: 200px;
+            max-height: none;
+            background-color: #2c3e50;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #searchBtn {
+            background-color: white;
+        }
+
+        #clearBtn {
+            background-color: white;
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-menu li:hover .sub-menu li a {
+            padding-left: 15px;
+        }
+
+        .document-content img {
+            width: 50% !important;  /* 覆盖富文本内联样式 */
+            height: auto !important;
+        }
+        /*
+            图片预览
+         */
+
+
+        .thumbnail-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+        }
+        .thumbnail {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-radius: 4px;
+        }
+        .thumbnail:hover {
+            transform: scale(1.03);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+        }
+        .modal-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        /*.modal-image {*/
+        /*    position: absolute;*/
+        /*    max-width: 100%;*/
+        /*    max-height: 100%;*/
+        /*    transition: transform 0.1s;*/
+        /*    cursor: move;*/
+        /*    user-select: none;*/
+        /*    -webkit-user-drag: none;*/
+        /*} */
+        .modal-image {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.1s;
+            cursor: move;
+            user-select: none;
+            -webkit-user-drag: none;
+            width: 40%;
+            height: auto;
+            left: 30%;
+            top: 10%;
+        }
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1001;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001;
+            display: flex;
+            gap: 10px;
+        }
+        .zoom-btn {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .thumbnail {
+                max-width: 150px;
+            }
+            .close-btn {
+                top: 10px;
+                right: 10px;
+                font-size: 24px;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                height: 100vh;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+            .document-content img {
+                max-width: 100% !important;  /* 覆盖富文本内联样式 */
+                height: auto !important;
+                width: auto !important;
+            }
+            .sidebar.collapsed {
+                width: 60px;
+                left: -60px;
+            }
+
+            .sidebar.collapsed.active {
+                left: 0;
+            }
+
+            /* 折叠按钮 */
+            .toggle-sidebar {
+                display: none;
+                position: absolute;
+                left: 15px;
+                top: 10px;
+                width: 25px;
+                height: 20px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                border-radius: 0 5px 5px 0;
+                color: #ccc;
+            }
+            .modal-image {
+                position: absolute;
+                max-width: 100%;
+                max-height: 100%;
+                transition: transform 0.1s;
+                cursor: move;
+                user-select: none;
+                -webkit-user-drag: none;
+                width: 90%;
+                height: auto;
+                left: 5%;
+                top: 30%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 移动端菜单按钮 -->
+    <div class="mobile-menu-btn">
+        <i class="bi bi-list"></i>
+    </div>
+
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <!-- 搜索框 -->
+        <div class="search-box">
+            <input type="text" placeholder="搜索..." id="searchInput">
+            <button id="searchBtn"><i class="bi bi-search"></i></button>
+            <button id="clearBtn"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <!-- 导航菜单 -->
+        <ul class="nav-menu menu-data">
+            <li class="active home" data-api="home">
+                <a href="#">
+                    <span class="nav-text">红圈系统操作手册</span>
+                </a>
+            </li>
+            {volist name="menuData" id="position"}
+            <li class="has-submenu">
+                <a href="#">
+                    <span class="nav-text">{$position.position_name}</span>
+                    <i class="bi bi-chevron-right arrow"></i>
+                </a>
+                <ul class="sub-menu">
+                    {volist name="position.list" id="document"}
+                    <li data-api="detail?id={$document.id}">
+                        <a href="#">
+                            <span class="nav-text">{$document.title}</span>
+                        </a>
+                    </li>
+                    {/volist}
+
+                </ul>
+            </li>
+            {/volist}
+        </ul>
+        <ul class="nav-menu search-data">
+        </ul>
+
+
+
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+
+
+        <div class="content-header">
+            <div class="toggle-sidebar">
+                <i class="bi bi-list"></i>
+            </div>
+            <p class="document-title">{$homeContent.title}</p>
+        </div>
+
+        <div class="content-body document-content">
+            <p class="content">{$homeContent.content}</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal-overlay">
+    <span class="close-btn">&times;</span>
+    <div class="modal-content">
+        <img src="" class="modal-image">
+    </div>
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-in">+</button>
+        <button class="zoom-btn" id="zoom-out">-</button>
+        <button class="zoom-btn" id="zoom-reset">↻</button>
+    </div>
+</div>
+
+<script src="__ADMIN_JS__/core/jquery.min.js?v={:config('asset_version')}"></script>
+<script>
+    // ajax 请求 111
+    function fetchAPI(url, data, callback,type = 'GET') {
+        // 显示加载状态
+        //ajax请求后端api
+        $.ajax({
+            url: url, // 请求发送到哪个URL
+            type: type, // HTTP请求类型，如 GET 或 POST
+            dataType: 'json', // 预期服务器返回的数据类型
+            data: data, // 发送到服务器的数据
+            success: function(response) { // 请求成功时的回调函数
+                callback(response);
+            },
+            error: function(xhr, status, error) { // 请求失败时的回调函数
+                console.error('An error occurred:', error);
+            }
+        })
+
+    }
+
+    $(document).ready(function() {
+        // 移动端菜单按钮点击事件
+        $('.mobile-menu-btn').click(function() {
+            $('.sidebar').toggleClass('active');
+        });
+
+        // 折叠/展开侧边栏
+        $('.toggle-sidebar').click(function(e) {
+            e.stopPropagation();
+            $('.sidebar').toggleClass('collapsed');
+            // $(this).find('i').toggleClass('bi-chevron-left bi-chevron-right');
+        });
+
+        // 二级菜单展开/折叠
+        $('.has-submenu > a').click(function(e) {
+            if ($(window).width() > 768 || !$('.sidebar').hasClass('collapsed')) {
+                e.preventDefault();
+                const parentLi = $(this).parent('li');
+                parentLi.toggleClass('expanded');
+
+                // 关闭其他展开的菜单
+                if (!e.ctrlKey) { // 按住Ctrl可以同时展开多个菜单
+                    parentLi.siblings('.expanded').removeClass('expanded');
+                }
+            }
+        });
+
+        // 导航菜单点击事件
+        $('.nav-menu').on('click', 'li:not(.has-submenu) > a', function(e) {
+
+            e.preventDefault();
+            // 移除所有active类
+            $('.nav-menu li').removeClass('active');
+
+            // 给当前点击的li添加active类
+            const li = $(this).parent('li');
+            li.addClass('active');
+
+            // 如果有父菜单，也保持展开状态
+            li.parents('.has-submenu').addClass('expanded');
+
+            // 获取data-api属性值
+            var apiUrl = li.data('api');
+
+            // 调用API获取内容
+            fetchAPI(apiUrl, {}, function(response) {
+                 $('.document-title').html(response.data.title);
+                 $('.document-content').html(response.data.content);
+            });
+
+            // 如果是移动端，点击后关闭菜单
+            if ($(window).width() <= 768 && !$('.sidebar').hasClass('collapsed')) {
+                $('.sidebar').removeClass('active');
+            }
+        });
+        // 搜索功能
+
+        //输入框输入文字 111
+        $('#searchInput').on('input', function() {
+            var keyword = $(this).val().trim();
+            if (keyword) {
+                $('.search-data').show();
+                $('#searchBtn').hide();
+                $('#clearBtn').show();
+                $('.menu-data').hide();
+
+                fetchAPI('search', { keyword: keyword }, function(response) {
+                    var liStar = '';
+                    $.each(response.data, function(index, value) {
+                        liStar += "<li data-api=\"detail?id=" +
+                            value.id+"\">" +
+                            "<a href=\"#\">" +
+                            "<span class=\"nav-text\">" +
+                            value.title+
+                            "</span>" +
+                            "</a>" +
+                            "</li>";
+                    });
+                    $('.search-data').html(liStar);
+                });
+            } else {
+                $('.search-data').hide();
+                $('.menu-data').show();
+                $('#searchBtn').show();
+                $('#clearBtn').hide();
+            }
+        });
+        //清除搜索的关键字 111
+        $("#clearBtn").click(function (){
+            $('#searchInput').val('');
+            $('.search-data').hide();
+            $('.menu-data').show();
+            $('#searchBtn').show();
+            $('#clearBtn').hide();
+        });
+
+        // 搜索功能 111
+        $('#searchBtn').click(function() {
+            var keyword = $('#searchInput').val().trim();
+            if (keyword) {
+                fetchAPI('search', { keyword: keyword }, function(response) {
+                    var liStar = '';
+                    $.each(response.data, function(index, value) {
+                        liStar += "<li data-api=\"detail/" +
+                            value.id+"\">" +
+                            "<a href=\"#\">" +
+                            "<span class=\"nav-text\">" +
+                            value.title+
+                            "</span>" +
+                            "</a>" +
+                            "</li>";
+                    });
+                    $('.search-data').html(liStar);
+                });
+            }
+        });
+
+        // 按回车键也可以搜索
+        $('#searchInput').keypress(function (e) {
+            if (e.which == 13) {
+                $('#searchBtn').click();
+            }
+        });
+
+        // 点击主内容区关闭移动端菜单
+        $('.main-content').click(function() {
+            if ($(window).width() <= 768 && $('.sidebar').hasClass('active')) {
+                $('.sidebar').removeClass('active');
+            }
+        });
+
+        // 窗口大小改变时调整布局
+        $(window).resize(function() {
+            if ($(window).width() > 768) {
+                $('.sidebar').removeClass('active');
+            }
+        });
+
+
+        //图片预览
+        // 变量初始化
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+        let currentScale = 1;
+        let initialDistance = null;
+        let lastTouchEnd = 0;
+
+        // 打开模态框
+        $('.document-content').on('click','img', function() {
+            const fullImageUrl = $(this).attr('src');
+            $('.modal-image').attr('src', fullImageUrl);
+            $('.modal-overlay').fadeIn();
+
+            // 重置状态
+            resetImagePosition();
+        });
+
+        // 关闭模态框
+        $('.close-btn, .modal-overlay').on('click', function(e) {
+            if (e.target === this || $(e.target).hasClass('close-btn')) {
+                $('.modal-overlay').fadeOut();
+            }
+        });
+
+        // 阻止模态框内容点击关闭
+        $('.modal-content').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // 桌面端鼠标拖动
+        $('.modal-image').on({
+            'mousedown': function(e) {
+                if (currentScale <= 1) return;
+
+                isDragging = true;
+                startX = e.pageX - translateX;
+                startY = e.pageY - translateY;
+                $(this).css('cursor', 'grabbing');
+                e.preventDefault();
+            },
+            'mousemove': function(e) {
+                if (!isDragging || currentScale <= 1) return;
+
+                translateX = e.pageX - startX;
+                translateY = e.pageY - startY;
+
+                applyTransform();
+            },
+            'mouseup': function() {
+                isDragging = false;
+                $('.modal-image').css('cursor', 'move');
+            },
+            'mouseleave': function() {
+                isDragging = false;
+                $('.modal-image').css('cursor', 'move');
+            }
+        });
+
+        // 移动端触摸事件
+        $('.modal-image').on({
+            'touchstart': function(e) {
+                if (e.originalEvent.touches.length === 1) {
+                    // 单指拖动
+                    if (currentScale <= 1) return;
+
+                    isDragging = true;
+                    const touch = e.originalEvent.touches[0];
+                    startX = touch.pageX - translateX;
+                    startY = touch.pageY - translateY;
+                    e.preventDefault();
+                } else if (e.originalEvent.touches.length === 2) {
+                    // 双指缩放
+                    e.preventDefault();
+                    const touch1 = e.originalEvent.touches[0];
+                    const touch2 = e.originalEvent.touches[1];
+                    initialDistance = Math.hypot(
+                        touch2.pageX - touch1.pageX,
+                        touch2.pageY - touch1.pageY
+                    );
+                }
+            },
+            'touchmove': function(e) {
+                if (e.originalEvent.touches.length === 1 && isDragging) {
+                    // 单指拖动
+                    if (currentScale <= 1) return;
+
+                    const touch = e.originalEvent.touches[0];
+                    translateX = touch.pageX - startX;
+                    translateY = touch.pageY - startY;
+
+                    applyTransform();
+                    e.preventDefault();
+                } else if (e.originalEvent.touches.length === 2) {
+                    // 双指缩放
+                    const touch1 = e.originalEvent.touches[0];
+                    const touch2 = e.originalEvent.touches[1];
+                    const currentDistance = Math.hypot(
+                        touch2.pageX - touch1.pageX,
+                        touch2.pageY - touch1.pageY
+                    );
+
+                    if (initialDistance !== null) {
+                        const scale = currentDistance / initialDistance;
+                        const newScale = currentScale * scale;
+
+                        if (newScale > 0.5 && newScale < 5) {
+                            currentScale = newScale;
+                            applyTransform();
+                        }
+
+                        // 更新初始距离，实现连续缩放
+                        initialDistance = currentDistance;
+                    }
+                    e.preventDefault();
+                }
+            },
+            'touchend': function(e) {
+                if (e.originalEvent.touches.length === 0) {
+                    isDragging = false;
+                    initialDistance = null;
+
+                    // 双击检测
+                    const now = new Date().getTime();
+                    if (now - lastTouchEnd <= 300) {
+                        toggleZoom();
+                    }
+                    lastTouchEnd = now;
+                } else if (e.originalEvent.touches.length === 1) {
+                    initialDistance = null;
+                }
+            }
+        });
+
+        // 阻止默认触摸行为
+        document.addEventListener('touchmove', function(e) {
+            if ($('.modal-overlay').is(':visible')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 鼠标滚轮缩放
+        $('.modal-image').on('wheel', function(e) {
+            e.preventDefault();
+
+            const delta = e.originalEvent.deltaY > 0 ? 0.9 : 1.1;
+            const newScale = currentScale * delta;
+
+            if (newScale > 0.5 && newScale < 5) {
+                currentScale = newScale;
+
+                // 以鼠标位置为中心缩放
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.pageX - rect.left;
+                const offsetY = e.pageY - rect.top;
+
+                // translateX = offsetX - (offsetX - translateX) * delta;
+                // translateY = offsetY - (offsetY - translateY) * delta;
+
+                applyTransform();
+            }
+        });
+
+        // 缩放按钮
+        $('#zoom-in').on('click', function() {
+            zoomImage(1.2);
+        });
+
+        $('#zoom-out').on('click', function() {
+            zoomImage(0.8);
+        });
+
+        $('#zoom-reset').on('click', resetImagePosition);
+
+        // 双击切换缩放
+        $('.modal-image').on('dblclick', toggleZoom);
+
+        // 辅助函数
+        function applyTransform() {
+            $('.modal-image').css('transform', `translate(${translateX}px, ${translateY}px) scale(${currentScale})`);
+        }
+
+        function zoomImage(scaleFactor) {
+            const newScale = currentScale * scaleFactor;
+
+            if (newScale > 0.5 && newScale < 5) {
+                currentScale = newScale;
+                applyTransform();
+            }
+        }
+
+        function resetImagePosition() {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            applyTransform();
+        }
+
+        function toggleZoom() {
+            if (currentScale === 1) {
+                currentScale = 2;
+
+                // 获取图片中心位置
+                const img = $('.modal-image')[0];
+                const rect = img.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                translateX = centerX - (centerX - translateX) * 2;
+                translateY = centerY - (centerY - translateY) * 2;
+            } else {
+                resetImagePosition();
+            }
+            applyTransform();
+        }
+
+
+    });
+</script>
+</body>
+</html>

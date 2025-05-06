@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--[if IE 9]>         <html class="ie9 no-focus" lang="zh"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-focus" lang="zh"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    {block name="page-title"}<title>{$page_title|default='后台'} </title>{/block}
+
+    <meta name="description" content="{:config('web_site_description')}">
+    <meta name="author" content="caiweiming">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=0">
+
+
+
+
+    <!-- Bootstrap and OneUI CSS framework -->
+    {eq name="Think.config.minify_status" value="1"}
+    <link rel="stylesheet" id="css-main" href="{:minify('group', 'libs_css,core_css')}">
+    {else/}
+    <link rel="stylesheet" href="__LIBS__/sweetalert/sweetalert.min.css?v={:config('asset_version')}">
+    <link rel="stylesheet" href="__LIBS__/magnific-popup/magnific-popup.min.css?v={:config('asset_version')}">
+    <link rel="stylesheet" href="__ADMIN_CSS__/bootstrap.min.css?v={:config('asset_version')}">
+    <link rel="stylesheet" href="__ADMIN_CSS__/oneui.css?v={:config('asset_version')}">
+    <link rel="stylesheet" href="__ADMIN_CSS__/dolphin.css?v={:config('asset_version')}" id="css-main">
+    <link rel="stylesheet" href="__LIBS__/viewer/viewer.min.css?v={:config('asset_version')}">
+    {/eq}
+    <link rel="stylesheet" id="css-theme" href="__ADMIN_CSS__/themes/{:config('system_color')}.min.css?v={:config('asset_version')}">
+    <link rel="stylesheet" id="pos_document" href="__ADMIN_CSS__/themes/{:config('system_color')}.min.css?v={:config('asset_version')}">
+
+
+
+    <!--自定义css-->
+    <link rel="stylesheet" href="__ADMIN_CSS__/custom.css?v={:config('asset_version')}">
+    <script>
+        // url
+        var dolphin = {
+            'field_hide': '{$field_hide|default=""}', // 需要隐藏的字段
+            'field_values': '{$field_values|default=""}',
+            'validate': '{$validate|default=""}', // 验证器
+            'validate_fields': '{$validate_fields|default=""}', // 验证字段
+            'search_field': '{:input("param.search_field", "")}', // 搜索字段
+            'file_upload_url': '{$file_upload_url ? $file_upload_url : url("api/attachment/upload", ["dir" => "files", "module" => request()->module()])}',
+            // 字段过滤
+            '_filter': '{$Request.param._filter ? $Request.param._filter : (isset($_filter) ? $_filter : "")}',
+            '_filter_content': '{$Request.param._filter_content == '' ? (isset($_filter_content) ? $_filter_content : "") : $Request.param._filter_content}',
+            '_field_display': '{$Request.param._field_display ? $Request.param._field_display : (isset($_field_display) ? $_field_display : "")}',
+            '_field_clear': {:json_encode(isset($field_clear) ? $field_clear : [])},
+            'get_filter_list': '{:url("admin/ajax/getFilterList")}',
+            'curr_url': '{:url("", $Request.route)}',
+            'curr_params': {:json_encode($Request.param)},
+            'layer': {:json_encode(config("zbuilder.pop"))}
+        };
+    </script>
+</head>
+<body>
+<!-- Page Container -->
+
+
+
+    <!-- Main Container -->
+    <main id="main-container">
+
+        <!-- Page Content -->
+        <div class="content">
+            {// 主体内容}
+            {block name="content"}{/block}
+        </div>
+        <!-- END Page Content -->
+    </main>
+    <!-- END Main Container -->
+
+
+
+<!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
+{eq name="Think.config.minify_status" value="1"}
+<script src="{:minify('group', 'core_js,libs_js')}"></script>
+{else/}
+<script src="__ADMIN_JS__/core/jquery.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/bootstrap.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/jquery.slimscroll.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/jquery.scrollLock.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/jquery.appear.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/jquery.countTo.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/jquery.placeholder.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/core/js.cookie.min.js?v={:config('asset_version')}"></script>
+<script src="__LIBS__/magnific-popup/magnific-popup.min.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/app.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/dolphin.js?v={:config('asset_version')}"></script>
+<script src="__ADMIN_JS__/builder/table.js?v={:config('asset_version')}"></script>
+
+{/eq}
+
+<!-- Page JS Plugins -->
+<script src="__LIBS__/layer/layer.js?v={:config('asset_version')}"></script>
+
+
+
+
+<!--页面js-->
+{block name="script"}{/block}
+
+<!--插件js钩子-->
+{:hook('page_plugin_js')}
+
+{// 额外HTML代码 }
+{$extra_html|raw|default=''}
+</body>
+</html>
