@@ -24,64 +24,28 @@ if (!function_exists('is_signin')) {
      * 判断是否登录
      * @author 蔡伟明 <314013107@qq.com>
      * @return mixed
-     * update by zheng 2025/5/6 红圈token判断登录状态
      */
     function is_signin()
     {
-        //红圈token判断逻辑添加
-        $token =  request()->get('token','');
-        if ($token) {
-            //根据token获取用户信息且设置用户的数据
-
-
-            //指定sessionID
-            session_id($token);
-            $user = session('user_auth');
-            var_dump($token);die;
-            if (empty($user)) {
-                // 判断是否记住登录
-                if (cookie('?uid') && cookie('?signin_token')) {
-                    $UserModel = new User();
-                    $user = $UserModel::get(cookie('uid'));
-                    if ($user) {
-                        $signin_token = data_auth_sign($user['username'].$user['id'].$user['last_login_time']);
-                        if (cookie('signin_token') == $signin_token) {
-                            // 自动登录
-                            $UserModel->autoLogin($user);
-                            return $user['id'];
-                        }
+        $user = session('user_auth');
+        if (empty($user)) {
+            // 判断是否记住登录
+            if (cookie('?uid') && cookie('?signin_token')) {
+                $UserModel = new User();
+                $user = $UserModel::get(cookie('uid'));
+                if ($user) {
+                    $signin_token = data_auth_sign($user['username'].$user['id'].$user['last_login_time']);
+                    if (cookie('signin_token') == $signin_token) {
+                        // 自动登录
+                        $UserModel->autoLogin($user);
+                        return $user['id'];
                     }
-                };
-                return 0;
-            }else{
-                return session('user_auth_sign') == data_auth_sign($user) ? $user['uid'] : 0;
-            }
-        } else {
-            $user = session('user_auth');
-            if (empty($user)) {
-                // 判断是否记住登录
-                if (cookie('?uid') && cookie('?signin_token')) {
-                    $UserModel = new User();
-                    $user = $UserModel::get(cookie('uid'));
-                    if ($user) {
-                        $signin_token = data_auth_sign($user['username'].$user['id'].$user['last_login_time']);
-                        if (cookie('signin_token') == $signin_token) {
-                            // 自动登录
-                            $UserModel->autoLogin($user);
-                            return $user['id'];
-                        }
-                    }
-                };
-                return 0;
-            }else{
-                return session('user_auth_sign') == data_auth_sign($user) ? $user['uid'] : 0;
-            }
+                }
+            };
+            return 0;
+        }else{
+            return session('user_auth_sign') == data_auth_sign($user) ? $user['uid'] : 0;
         }
-
-
-
-
-
     }
 }
 
