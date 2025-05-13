@@ -474,7 +474,7 @@
         var queryString =window.location.search;
         var href = $(this).attr('href');
         var params = new URLSearchParams(queryString);
-        urlToken = params.get('token'); 
+        urlToken = params.get('token');
         if (urlToken) {
             token = urlToken;
             localStorage.setItem('token', token);

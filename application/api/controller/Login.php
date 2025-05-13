@@ -10,11 +10,10 @@ class Login extends Common {
     public function index(){
         if(!empty($this->request->get('auth_code'))){
             $auth_code = $this->request->get('auth_code');
-//            $phone = $this->GetHecomUserName($auth_code);
-//            if($phone == '13600520970'){
-//                $phone = '15057465733';
-//            }
-            $phone = '15057465733';
+            $phone = $this->GetHecomUserName($auth_code);
+            if($phone == '13600520970'){
+                $phone = '15057465733';
+            }
             $user = UserModel::get(['mobile' => $phone]);
             if($user){
                 $usermodel = new UserModel();
