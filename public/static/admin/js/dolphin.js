@@ -4,6 +4,15 @@
  */
 
 var Dolphin = function () {
+    let token = localStorage.getItem('token');
+    let urlToken ='';
+    var queryString =window.location.href;
+    var params = new URLSearchParams(queryString);
+    urlToken = params.get('token');
+    if (urlToken) {
+        token = urlToken;
+        localStorage.setItem('token', token);
+    }
     /**
      * 处理ajax方式的post提交
      * @author CaiWeiMing <314013107@qq.com>
@@ -21,6 +30,12 @@ var Dolphin = function () {
                 form = jQuery('.' + target_form);
             }
             var form_data   = form.serialize();
+            if (ajax_url) {
+                let searchTerm = "token";
+                if (ajax_url.indexOf(searchTerm) === -1) {
+                    ajax_url = token ? ajax_url+ "?token="+token :ajax_url;
+                }
+            }
 
             if ("submit" === self.attr("type") || ajax_url) {
                 // 不存在“.target-form”元素则返回false
@@ -44,11 +59,16 @@ var Dolphin = function () {
                         }, function () {
                             pageLoader();
                             self.attr("autocomplete", "off").prop("disabled", true);
-
                             // 发送ajax请求
                             jQuery.post(ajax_url, form_data, {}, 'json').success(function(res) {
                                 pageLoader('hide');
                                 msg = res.msg;
+                                if (res.url) {
+                                    let searchTerm = "token";
+                                    if (res.url.indexOf(searchTerm) === -1) {
+                                        res.url = token ? res.url+ "?token="+token :res.url;
+                                    }
+                                }
                                 if (res.code) {
                                     if (res.url && !self.hasClass("no-refresh")) {
                                         msg += " 页面即将自动跳转~";
@@ -111,7 +131,6 @@ var Dolphin = function () {
                         Dolphin.notify('请选择要操作的数据', 'warning');
                         return false;
                     }
-
                     // 提交确认
                     if (self.hasClass('confirm')) {
                         swal({
@@ -132,6 +151,12 @@ var Dolphin = function () {
                             jQuery.post(ajax_url, form_data, {}, 'json').success(function(res) {
                                 pageLoader('hide');
                                 msg = res.msg;
+                                if (res.url) {
+                                    let searchTerm = "token";
+                                    if (res.url.indexOf(searchTerm) === -1) {
+                                        res.url = token ? res.url+ "?token="+token :res.url;
+                                    }
+                                }
                                 if (res.code) {
                                     if (res.url && !self.hasClass("no-refresh")) {
                                         msg += " 页面即将自动跳转~";
@@ -209,6 +234,12 @@ var Dolphin = function () {
                             jQuery.post(ajax_url, form_data, {}, 'json').success(function(res) {
                                 pageLoader('hide');
                                 msg = res.msg;
+                                if (res.url) {
+                                    let searchTerm = "token";
+                                    if (res.url.indexOf(searchTerm) === -1) {
+                                        res.url = token ? res.url+ "?token="+token :res.url;
+                                    }
+                                }
                                 if (res.code) {
                                     if (res.url && !self.hasClass("no-refresh")) {
                                         msg += " 页面即将自动跳转~";
@@ -269,11 +300,15 @@ var Dolphin = function () {
                 }
 
                 // 直接发送ajax请求
-                pageLoader();
                 jQuery.post(ajax_url, form_data, {}, 'json').success(function(res) {
                     pageLoader('hide');
                     msg = res.msg;
-
+                    if (res.url) {
+                        let searchTerm = "token";
+                        if (res.url.indexOf(searchTerm) === -1) {
+                            res.url = token ? res.url+ "?token="+token :res.url;
+                        }
+                    }
                     if (res.code) {
                         if (res.url && !self.hasClass("no-refresh")) {
                             msg += "， 页面即将自动跳转~";
@@ -341,6 +376,12 @@ var Dolphin = function () {
             var title       = self.data('title') || '确定要执行该操作吗？';
             var confirm_btn = self.data('confirm') || '确定';
             var cancel_btn  = self.data('cancel') || '取消';
+            if (ajax_url) {
+                let searchTerm = "token";
+                if (ajax_url.indexOf(searchTerm) === -1) {
+                    ajax_url = token ? ajax_url+ "?token="+token :ajax_url;
+                }
+            }
             // 执行确认
             if (self.hasClass('confirm')) {
                 swal({
@@ -361,6 +402,12 @@ var Dolphin = function () {
                     jQuery.get(ajax_url, {}, {}, 'json').success(function(res) {
                         pageLoader('hide');
                         msg = res.msg;
+                        if (res.url) {
+                            let searchTerm = "token";
+                            if (res.url.indexOf(searchTerm) === -1) {
+                                res.url = token ? res.url+ "?token="+token :res.url;
+                            }
+                        }
                         if (res.code) {
                             if (res.url && !self.hasClass("no-refresh")) {
                                 msg += " 页面即将自动跳转~";
@@ -420,6 +467,12 @@ var Dolphin = function () {
                 jQuery.get(ajax_url, {}, {}, 'json').success(function(res) {
                     pageLoader('hide');
                     msg = res.msg;
+                    if (res.url) {
+                        let searchTerm = "token";
+                        if (res.url.indexOf(searchTerm) === -1) {
+                            res.url = token ? res.url+ "?token="+token :res.url;
+                        }
+                    }
                     if (res.code) {
                         if (res.url && !self.hasClass("no-refresh")) {
                             msg += " 页面即将自动跳转~";
@@ -508,7 +561,6 @@ var Dolphin = function () {
             } else {
                 url += '?' + target_form + '=' + form_data;
             }
-
             // 执行确认
             if (self.hasClass('confirm')) {
                 swal({
@@ -553,18 +605,45 @@ var Dolphin = function () {
                 controller: $(this).data('controller') || ''
             };
 
+            let token = localStorage.getItem('token');
+            let urlToken ='';
+            var queryString =window.location.search;
+            var params = new URLSearchParams(queryString);
+            urlToken = params.get('token');
+            if (urlToken) {
+                token = urlToken;
+                localStorage.setItem('token', token);
+            }
             if ($('#nav-' + data.module_id).length) {
+
+                if (token) {
+                    location.href = $('#nav-' + data.module_id).find('a').not('.nav-submenu').first().attr('href')+"?token="+token;
+                }
                 location.href = $('#nav-' + data.module_id).find('a').not('.nav-submenu').first().attr('href');
+
             } else {
-                $.post(dolphin.top_menu_url, data, function (res) {
+                if (token) {
+                    var post_url =dolphin.top_menu_url + "?token="+token;
+                } else {
+                    var post_url = dolphin.top_menu_url;
+                }
+
+                $.post(post_url, data, function (res) {
                     if (res.code) {
                         if (res.data === '') {
                             tips('暂无无节点权限', 'danger');return false;
                         }
-                        if ($target === '_self') {
-                            location.href = res.data;
+
+                        let searchTerm = "token";
+                        if (res.data.indexOf(searchTerm) === -1) {
+                            var openUrl  = token ? res.data+ "?token="+token :res.data;
                         } else {
-                            window.open(res.data);
+                            var openUrl =res.data;
+                        }
+                        if ($target === '_self') {
+                            location.href = openUrl;
+                        } else {
+                            window.open(openUrl);
                         }
                     } else {
                         tips(res.msg, 'danger');
@@ -697,6 +776,20 @@ var Dolphin = function () {
         });
     };
 
+
+
+    var setToken = function (){
+        let token = localStorage.getItem('token');
+        let urlToken ='';
+        // 获取当前 URL 的查询参数部分（?之后的内容）
+        var queryString = window.location.search;
+        var params = new URLSearchParams(queryString);
+        urlToken = params.get('token');   // :ml-citation{ref="1,4" data="citationList"}
+        if (urlToken) {
+            token = urlToken;
+            localStorage.setItem('token', token);
+        }
+    };
     return {
         // 初始化
         init: function () {
@@ -705,6 +798,7 @@ var Dolphin = function () {
             jsGet();
             topMenu();
             pageReloadLoader();
+            setToken();
         },
         // 页面加载提示
         loading: function ($mode) {

@@ -57,6 +57,7 @@ class ClockInStat extends common
                             if ($count > 1) {
                                 $on_clock = $member_clocks[0];
                                 $off_clock = $member_clocks[$count-1];
+                                $row['station'] = $on_clock['station'] ?? '';
                                 $row['member_name'] = $on_clock['member_name'];
                                 $row['uid'] = $on_clock['uid'];
                                 $row['on_time'] = $on_clock['create_time'];
@@ -77,6 +78,7 @@ class ClockInStat extends common
                                 } else {
                                     $on_clock = $clock;
                                 }
+                                $row['station'] = $clock['station'] ?? '';
                                 $row['member_name'] = $clock['member_name'] ?? '';
                                 $row['uid'] = $clock['uid'] ?? '';
                                 $row['on_time'] = $on_clock['create_time'] ?? '';

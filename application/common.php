@@ -27,6 +27,11 @@ if (!function_exists('is_signin')) {
      */
     function is_signin()
     {
+		//嵌入第三方token验证登录
+        $token = app()->request->get('token');
+        if ($token) {
+            session_id($token);
+        }
         $user = session('user_auth');
         if (empty($user)) {
             // 判断是否记住登录
