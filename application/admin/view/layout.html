@@ -467,7 +467,7 @@
 {/notempty}
 
 <script>
-    //左侧导航
+    //页面自定义a标签跳转处理
     $(document).on('click', 'a', function(e) {
         let token = localStorage.getItem('token');
         let urlToken ='';
@@ -477,14 +477,16 @@
         urlToken = params.get('token');
         if (urlToken) {
             token = urlToken;
-            localStorage.setItem('token', token);
         }
-        if (!$(this).hasClass('top-menu') && !$(this).hasClass('ajax-get') && !$(this).hasClass('ajax-post') && !$(this).hasClass('js-get'))  {
-            e.preventDefault();
-            if (token) {
-                window.location.href =  href+"?token="+token;
+        if (token) {
+            localStorage.setItem('token', token);
+            if (!$(this).hasClass('top-menu') && !$(this).hasClass('ajax-get') && !$(this).hasClass('ajax-post') && !$(this).hasClass('js-get') && !$(this).hasClass('js-get'))  {
+                e.preventDefault(); // 可选：阻止默认跳转
+                // $(this).attr('href',href+"?token="+token);
+                window.location.href = href+"?token="+token;
             }
         }
+
     });
     jQuery(function () {
         // 切换角色
