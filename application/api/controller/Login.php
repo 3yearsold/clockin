@@ -19,12 +19,11 @@ class Login extends Common {
                 $usermodel = new UserModel();
                 $id = $usermodel->autoLogin($user);
                 if($id){
-                    return redirect('/admin.php/clock?token='.session_id());
+                    return redirect('/clock');
                 }
             }else{
-                 $this->error('用户不存在');
+                $this->error('用户不存在');
             }
-            
         }
     }
 

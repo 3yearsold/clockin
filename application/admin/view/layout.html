@@ -480,10 +480,12 @@
         }
         if (token) {
             localStorage.setItem('token', token);
-            if (!$(this).hasClass('top-menu') && !$(this).hasClass('ajax-get') && !$(this).hasClass('ajax-post') && !$(this).hasClass('js-get') && !$(this).hasClass('js-get'))  {
-                e.preventDefault(); // 可选：阻止默认跳转
-                // $(this).attr('href',href+"?token="+token);
-                window.location.href = href+"?token="+token;
+            if (!$(this).hasClass('top-menu') && !$(this).hasClass('ajax-get') && !$(this).hasClass('ajax-post') && !$(this).hasClass('js-get'))  {
+
+                if ($(this).closest('.pagination').length == 0) {
+                    e.preventDefault(); // 可选：阻止默认跳转
+                    window.location.href = href+"?token="+token;
+                }
             }
         }
 

@@ -617,10 +617,11 @@ var Dolphin = function () {
             if ($('#nav-' + data.module_id).length) {
 
                 if (token) {
-                    location.href = $('#nav-' + data.module_id).find('a').not('.nav-submenu').first().attr('href')+"?token="+token;
+                    var url = $('#nav-' + data.module_id).find('a').not('.nav-submenu').first().attr('href')+"?token="+token;
+                    location.href = url;
+                } else {
+                    location.href = $('#nav-' + data.module_id).find('a').not('.nav-submenu').first().attr('href');
                 }
-                location.href = $('#nav-' + data.module_id).find('a').not('.nav-submenu').first().attr('href');
-
             } else {
                 if (token) {
                     var post_url =dolphin.top_menu_url + "?token="+token;
