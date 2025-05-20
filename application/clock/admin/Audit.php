@@ -42,9 +42,9 @@ class Audit extends Admin
         return ZBuilder::make('table')
             ->setSearch(['name' => '班组名称','mobile'=>'申请人手机']) // 设置搜索框
             ->addColumns([ // 批量添加数据列
+                ['name', '申请绑定班组'],
                 ['uid','绑定微信ID'],
                 ['mobile', '申请人手机号'],
-                ['name', '申请绑定班组'],
                 ['is_group', '审核状态','status','',['未申请','绑定完成','待审核']],
                 ['right_button', '操作', 'btn'],
             ])

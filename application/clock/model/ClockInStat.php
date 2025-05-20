@@ -19,7 +19,7 @@ class ClockInStat extends Model
             ->view('clock_group','name','clock_group.id=clock_in_stat.group_id','LEFT')
             ->view('clock_member','mobile','clock_member.id=clock_in_stat.member_id','LEFT')
             ->where($map)
-            ->order('clock_date desc,name asc')
+            ->order('clock_date desc,id desc')
             ->paginate();
         return $list;
     }
@@ -32,7 +32,7 @@ class ClockInStat extends Model
             ->view('clock_group','name','clock_group.id=clock_in_stat.group_id','LEFT')
             ->view('clock_member','mobile','clock_member.id=clock_in_stat.member_id','LEFT')
             ->where($map)
-            ->order('clock_date desc,name asc')
+            ->order('clock_date desc,id desc')
             ->select()
             ->toArray();
         return $list;

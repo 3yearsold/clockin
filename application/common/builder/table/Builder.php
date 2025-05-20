@@ -168,7 +168,12 @@ class Builder extends ZBuilder
         $this->_controller = parse_name($this->request->controller());
         $this->_action     = $this->request->action();
         $this->_table_name = strtolower($this->_module.'_'.$this->_controller);
-        $this->_template   = Env::get('app_path'). 'common/builder/table/layout.html';
+        if ($this->request->isMobile()) {
+            $this->_template   = Env::get('app_path'). 'common/builder/table/mobile_layout.html';
+        } else {
+            $this->_template   = Env::get('app_path'). 'common/builder/table/layout.html';
+        }
+
 
         // 默认加载快速编辑所需js和css
         $this->_vars['_js_files'][]  = 'editable_js';

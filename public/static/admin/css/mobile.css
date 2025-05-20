@@ -1,0 +1,120 @@
+/*/
+* 后台自定义css
+*/
+.search-bar {
+    width: 250px;!important;
+
+}
+.row-checkbox{
+    width: 17px;!important;
+    height: 17px;!important;
+}
+.row-checkbox-label{
+    margin-left: 5px;!important;
+    margin-top: 2px;!important;
+    margin-right: 5px;!important;
+    vertical-align: bottom;!important;
+    margin-bottom: 0px;!important;
+}
+.row-top-name{
+    font-size: 20px;
+    font-weight: 600;
+    color: #161616;
+
+}
+
+.one-row{
+    margin: 15px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+
+}
+
+.row-title{
+    font-size: 18px;
+    color: #8b8b8b;
+    vertical-align: top;
+    flex: 0 0 120px;
+
+}
+
+.row-name{
+    font-size: 17px;
+    font-weight: 500;
+    color:#161616;
+    flex: 1;
+    font-family: 'Simple-Line-Icons';
+}
+
+.row-name .image {
+    width: 40%;!important;
+    height: auto; !important;
+}
+.builder-table-body{
+    max-height: 100%;!important;
+
+}
+
+.row-column-field{
+    display:flex;
+}
+.content {
+    background-color: #efefef;
+    padding: 0px;
+}
+
+#header-navbar{
+    background-color: #efefef;
+}
+
+.bg-gray-lighter {
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
+}
+.block-content{
+    padding: 0px;
+}
+.block-header {
+    padding: 10px 20px;
+}
+
+.data-table-toolbar {
+    padding: 0;
+
+}
+.row {
+    margin: 0px;
+    margin-bottom:5px;
+}
+
+.col-md-12 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.col-sm-12 {
+    margin-left: 0px;
+    /*padding-left: 10px;*/
+    /*padding-right: 10px;*/
+    margin-right:0px;
+}
+.builder-table-wrapper {
+    background-color: #efefef;
+}
+.builder-table-body {
+    /*margin-top: 10px;*/
+}
+.toolbar-btn-action {
+    border-bottom: 1px solid #ddd;
+}
+
+.rate-danger {
+    color: #ea3414;
+    text-align: center;
+}
+.rate-success {
+    color: #0a6aa1;
+    text-align: center;
+}

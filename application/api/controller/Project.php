@@ -52,9 +52,15 @@ class Project extends common
         $data = $this->request->post();
         if(!isset($data['teamid'])) return res([],400,'缺少参数');
         $teamId = $data['teamid'];
-
-        $list = DB::query("select id,member,gender,mobile,station from dp_clock_member where group_id in (select id from dp_clock_group where team_id = ".$teamId.") and status=0");
-
+        $uid = $_SERVER['HTTP_UID'];
+        //兼容多个班组,后续代码需要重构，班组长及民工兼容多班组、项目
+        $teamList = TeamModel::where(['uid' => $uid])->field('id,name')->select()->toArray();
+        if ($teamList) {
+            $teamList = implode(',',array_column($teamList,'id'));
+            $list = DB::query("select id,member,gender,mobile,station from dp_clock_member where group_id in (select id from dp_clock_group where team_id in (".$teamList.")) and status=0");
+        } else {
+            $list = DB::query("select id,member,gender,mobile,station from dp_clock_member where group_id in (select id from dp_clock_group where team_id = ".$teamId.") and status=0");
+        }
         return res($list);
 
     }

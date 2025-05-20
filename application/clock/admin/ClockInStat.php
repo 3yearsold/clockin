@@ -54,10 +54,10 @@ class ClockInStat extends Admin
             ->setPageTitle('打卡记录')
             ->setSearch(['member_name' => '民工姓名']) // 设置搜索框
             ->addColumns([ // 批量添加数据列
+                ['member_name','打卡民工'],
                 ['project_name', '项目'],
                 ['project_manager', '项目经理'],
                 ['name', '班组'],
-                ['member_name','打卡民工'],
                 ['station', '工种'],
                 ['on_time', '上班打卡时间','datetime'],
                 ['off_time', '下班打卡时间','datetime'],

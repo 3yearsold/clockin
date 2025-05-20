@@ -1,0 +1,170 @@
+{extend name="$_admin_base_layout" /}
+
+{block name="content"}
+<div class="row">
+    <div class="col-md-12">
+        <div class="block block-bordered">
+            <div class="block-content">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-4 col-lg-2">
+                        <a class="block block-link-hover3 text-center" href="{:url('project/add')}">
+                            <div class="block-content block-content-full">
+                                <i class="fa fa-plus fa-3x text-muted"></i>
+                                <div class="font-w600 push-15-t">新增项目</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-lg-2">
+                        <a class="block block-link-hover3 text-center" href="{:url('team/index')}">
+                            <div class="block-content block-content-full">
+                                <i class="fa fa-product-hunt fa-3x text-muted"></i>
+                                <div class="font-w600 push-15-t">项目动态</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-lg-2">
+                        <a class="block block-link-hover3 text-center" href="{:url('team/index')}">
+                            <div class="block-content block-content-full">
+                                <i class="fa fa-user-circle fa-3x text-muted"></i>
+                                <div class="font-w600 push-15-t">班组库管理</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-lg-2">
+                        <a class="block block-link-hover3 text-center" href="{:url('audit/index')}">
+                            <div class="block-content block-content-full">
+                                <i class="fa fa-check-circle-o fa-3x text-muted"></i>
+                                <div class="font-w600 push-15-t">班组审核</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-lg-2">
+                        <a class="block block-link-hover3 text-center" href="{:url('admission/index')}">
+                            <div class="block-content block-content-full">
+                                <i class="fa fa-hand-o-up fa-3x text-muted"></i>
+                                <div class="font-w600 push-15-t">进场确认</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-lg-2">
+                        <a class="block block-link-hover3 text-center" href="{:url('ClockInStat/index')}">
+                            <div class="block-content block-content-full">
+                                <i class="fa fa-table fa-3x text-muted"></i>
+                                <div class="font-w600 push-15-t">打卡记录</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+        <a class="block block-link-hover3 text-center" href="{:url('project/index')}">
+            <div class="block-content block-content-full">
+                <div class="h1 font-w700 text-primary" data-toggle="countTo" data-to="{$project|default=0}"></div>
+            </div>
+            <div class="block-content block-content-full block-content-mini bg-gray-lighter text-muted font-w600">在建项目</div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <a class="block block-link-hover3 text-center" href="{:url('dynamic/index')}">
+            <div class="block-content block-content-full">
+                <div class="h1 font-w700 text-success" data-toggle="countTo" data-to="{$status_0|default=0}"></div>
+            </div>
+            <div class="block-content block-content-full block-content-mini bg-gray-lighter text-muted font-w600">待班组审核人数</div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <a class="block block-link-hover3 text-center" href="{:url('dynamic/index')}">
+            <div class="block-content block-content-full">
+                <div class="h1 font-w700 text-info" data-toggle="countTo" data-to="{$status_2|default=0}"></div>
+            </div>
+            <div class="block-content block-content-full block-content-mini bg-gray-lighter text-muted font-w600">待项目确认人数</div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <a class="block block-link-hover3 text-center" href="{:url('dynamic/index')}">
+            <div class="block-content block-content-full">
+                <div class="h1 font-w700 text-warning"><span data-toggle="countTo" data-to="{$status_3|default=0}"></span></div>
+            </div>
+            <div class="block-content block-content-full block-content-mini bg-gray-lighter text-muted font-w600">在项目中人数</div>
+        </a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="block block-bordered">
+            <div class="builder-table-wrapper" id="builder-table-wrapper">
+                <div class="builder-table" id="builder-table">
+             <div class="builder-table-body">
+                 {volist name="projectStats" id="row"}
+                 <div class="one-row">
+                     <div class="row-column">
+                         <div class="row-column-field">
+                             <span class="row-top-name">{$row['project_name']}</span>
+                         </div>
+                    </div>
+                     <div class="row-column">
+                         <div class="row-column-field">
+                             <span style="flex: 0 0 160px;" class="row-title">驻场人数</span>
+                             <span style="text-align: center"  class="row-name">{$row['status3_count']}</span>
+                         </div>
+                     </div>
+                     <div class="row-column">
+                         <div class="row-column-field">
+                             <span style="flex: 0 0 160px;" class="row-title">打卡人数(昨天)</span>
+                             <span style="text-align: center"   class="row-name">{$row['yesterday_check_in_count']}</span>
+                         </div>
+                     </div>
+                     <div class="row-column">
+                         <div class="row-column-field">
+                             <span style="flex: 0 0 160px;" class="row-title">打卡率(昨天)</span>
+                             <span {if $row['yesterday_check_in_rate'] <= 90}
+                             class="rate-danger row-name"
+                             {else}
+                             class="rate-success row-name"
+                             {/if}  >{$row['yesterday_check_in_rate']}%</span>
+                         </div>
+                     </div>
+                     <div class="row-column">
+                         <div class="row-column-field">
+                             <span style="flex: 0 0 160px;" class="row-title">打卡人数(今天)</span>
+                             <span style="text-align: center"   class="row-name">{$row['today_check_in_count']}</span>
+                         </div>
+                     </div>
+                     <div class="row-column">
+                         <div class="row-column-field">
+                             <span style="flex: 0 0 160px;" class="row-title">打卡率(今天)</span>
+                             <span {if $row.today_check_in_rate <= 90}
+                             class="rate-danger row-name"
+                             {else}
+                             class="rate-success row-name"
+                             {/if}>{$row['today_check_in_rate'] }%</span>
+                         </div>
+                     </div>
+
+                </div>
+            {/volist}
+             </div>
+        </div>
+            </div>
+        </div>
+     </div>
+</div>
+
+{/block}
+
+{block name="script"}
+<script src="__ADMIN_JS__/core/jquery.countTo.min.js"></script>
+<script>
+    jQuery(function () {
+        App.initHelpers(['appear-countTo']);
+    });
+</script>
+{/block}
+
+{block name="style"}
+<link rel="stylesheet" href="__ADMIN_CSS__/mobile.css">
+{/block}

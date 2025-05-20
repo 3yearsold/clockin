@@ -31,7 +31,8 @@ class Index extends Admin
         $this->assign('status_2', Db::name('clock_member')->where('status',2)->count());
         $this->assign('status_3', Db::name('clock_member')->where('status',3)->count());
         $this->assign('page_title', '仪表盘');
-        return $this->fetch();
+        $temple = $this->request->isMobile() ? 'mobile_index' : 'index';
+        return $this->fetch($temple);
     }
 
 
