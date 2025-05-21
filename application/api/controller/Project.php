@@ -353,6 +353,13 @@ class Project extends common
         $lng = $data['lng'];
         $info = MemberModel::where(['uid'=>$uid ,'status' => 3])->field('id,project_id,member,station,group_id')->find();
         if(!$info) return res([],400,'未找到打卡项目信息');
+        //重复打卡校验
+        $time = time();
+        $date_time = strtotime(date('Y-m-d',$time));
+        $clock_log = ClockinModel::where(['uid'=>$uid,'clock_date' => $date_time])->order('id','desc')->find();
+        if ($clock_log && strtotime($clock_log['create_time']) + 60 >  $time) {
+            return res([],400,'请勿重复打卡');
+        }
         $location= config('location_api').$lat.','.$lng;
         $result = json_decode(file_get_contents($location),true);
         if($result['status'] == 0) {
