@@ -7,6 +7,7 @@ use app\clock\model\Team as TeamModel;
 use app\api\model\User as UserModel;
 use app\clock\model\Member as MemberModel;
 use app\clock\model\Clockin as ClockinModel;
+use app\clock\model\ClockInStat as ClockInStatModel;
 use app\clock\model\Group as GroupModel;
 use app\clock\model\Station as StationModel;
 use app\clock\model\Blacklist as BlacklistModel;
@@ -400,5 +401,30 @@ class Project extends common
     }
 
 
+    /**
+     * 民工打卡记录
+     * @return array
+     * User: zheng
+     * Date: 2025/5/21 14:32
+     */
+    public function getClockLog(){
+        $uid = isset($_SERVER['HTTP_UID']) ? $_SERVER['HTTP_UID'] : null;
+        if(!$uid) return res([],400,'未登录');
+        $data = $this->request->get();
+        $start_date = $data['start_date'] ?? date('Y-m-01');
+        $end_date = $data['end_date'] ?? date('Y-m-t');
 
+        $map = [
+            ['uid' , '=', $uid],
+            ['clock_date', 'between',[strtotime($start_date),strtotime($end_date)]]
+        ];
+        if (!empty($data['project_id'])) {
+            $map[] = ['project_id' , '=',  $data['project_id']];
+        }
+        if (!empty($data['group_id'])) {
+            $map[] = ['group_id' , '=',  $data['group_id']];
+        }
+        $log = ClockInStatModel::field('id,project_id,group_id,clock_date,on_time,off_time')->where($map)->paginate()->toArray();
+        return res($log);
+    }
 }

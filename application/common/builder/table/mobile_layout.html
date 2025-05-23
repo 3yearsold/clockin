@@ -23,9 +23,9 @@
                             <li>
                                 <button type="button" class="page-reload"><i class="si si-refresh"></i></button>
                             </li>
-                            <li>
-                                <button type="button" data-toggle="block-option" data-action="fullscreen_toggle"></button>
-                            </li>
+<!--                            <li>-->
+<!--                                <button type="button" data-toggle="block-option" data-action="fullscreen_toggle"></button>-->
+<!--                            </li>-->
                         </ul>
                     </li>
                 </ul>
@@ -34,11 +34,14 @@
                 <div class="block-header bg-gray-lighter">
                     <ul class="block-options">
                         <li>
-                            <button type="button" class="page-reload"><i class="si si-refresh"></i></button>
+                            <button type="button" class="select-button">筛选 <i class="fa fa-angle-down" aria-hidden="true"></i></button>
                         </li>
                         <li>
-                            <button type="button" data-toggle="block-option" data-action="fullscreen_toggle"></button>
+                            <button type="button" class="page-reload"><i class="si si-refresh"></i></button>
                         </li>
+<!--                        <li>-->
+<!--                            <button type="button" data-toggle="block-option" data-action="fullscreen_toggle"></button>-->
+<!--                        </li>-->
                     </ul>
                     <h3 class="block-title">{$page_title|default=""|htmlspecialchars}</h3>
                 </div>
@@ -307,6 +310,8 @@
         });
 
         $(document).ready(function () {
+
+
             var builder_table_head = $('#builder-table-head');
             var builder_table_left_body = $('#builder-table-left-body');
             var builder_table_right_body = $('#builder-table-right-body');
@@ -323,9 +328,9 @@
             {switch name="builder_height"}
             {case value="fixed"}
                 {empty name="_pop"}
-                $('#builder-table-wrapper').css('max-height', ($(window).height() - 340)+'px');
+                $('#builder-table-wrapper').css('max-height', ($(window).height() - 340-205)+'px');
                 {else/}
-                $('#builder-table-wrapper').css('max-height', ($(window).height() - 160)+'px');
+                $('#builder-table-wrapper').css('max-height', ($(window).height() - 160-205)+'px');
                 {/empty}
             {/case}
             {case value="auto"}{/case}
@@ -394,6 +399,59 @@
                 table_main_tr.eq($(this).index()).removeClass('hover');
                 table_left_tr.eq($(this).index()).removeClass('hover');
             });
+
+
+                //筛选按钮
+                $('.select-button').click(
+                    function (){
+                        const isVisible = $('.row.data-table-toolbar').is(':visible');
+                        var currentMaxHeight = $('#builder-table-body').css('max-height');
+                        if(isVisible) {
+                            $('.row.data-table-toolbar').slideUp(300);
+                            $(this).html('筛选 <i class="fa fa-angle-down" aria-hidden="true"></i>');
+                            if (currentMaxHeight !== 'none') {
+                                // 提取数值部分
+                                var numericValue = parseFloat(currentMaxHeight);
+                                // 提取单位部分（px, %, em等）
+                                var unit = currentMaxHeight.replace(/[0-9.]/g, '');
+                                // 计算新值并设置
+                                // $("#builder-table-body").animate({
+                                //     "max-height": (numericValue + 205) + unit
+                                // }, 500); // 1秒动画
+
+
+                                // $("#builder-table-wrapper").animate({
+                                //     "max-height": (numericValue + 205) + unit
+                                // }, 500); // 1秒动画
+
+                                $('#builder-table-body').css('max-height', (numericValue + 205) + unit);
+                                $('#builder-table-wrapper').css('max-height', (numericValue + 205) + unit);
+                            }
+
+                        } else {
+                            $('.row.data-table-toolbar').slideDown(300);
+                            $(this).html('筛选 <i class="fa fa-angle-up" aria-hidden="true"></i>');
+                            if (currentMaxHeight !== 'none') {
+                                // 提取数值部分
+                                var numericValue = parseFloat(currentMaxHeight);
+                                // 提取单位部分（px, %, em等）
+                                var unit = currentMaxHeight.replace(/[0-9.]/g, '');
+                                // 计算新值并设置
+                                $("#builder-table-body").animate({
+                                    "max-height": (numericValue - 205) + unit
+                                }, 500); // 1秒动画
+                                // $('#builder-table-body').css('max-height', (numericValue - 205) + unit);
+                                $("#builder-table-wrapper").animate({
+                                    "max-height": (numericValue - 205) + unit
+                                }, 500); // 1秒动画
+                                // $('#builder-table-body').css('max-height', (numericValue - 205) + unit);
+                                // $('#builder-table-wrapper').css('max-height', (numericValue - 205) + unit);
+                            }
+                        }
+                    }
+                );
+
+
         });
     </script>
     {volist name="js_list" id="vo"}
